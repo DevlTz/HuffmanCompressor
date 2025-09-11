@@ -1,0 +1,8 @@
+/build/
+/*.zip
+*.o
+*.exe
+*.out
+*.huf
+.vscode/
+.idea/

@@ -1,0 +1,1 @@
+Small texts to test compression.
