@@ -5,6 +5,7 @@
 #include <memory>
 #include <vector>
 #include <map>
+#include "../../include/huffman/bit_stream.h"
 
 // struct HNode {
 //     uint8_t symbol;
@@ -26,11 +27,15 @@ public:
     HuffmanTree();
     void build(const std::map<std::string, uint64_t> &freqs); // freqs size 256
     std::map<std::string, std::vector<bool>> getCodes() const;
+    std::shared_ptr<HNode> getRoot() const;
     void serialize(std::ostream &out) const;
     void deserialize(std::istream &in);
+
 private:
     std::shared_ptr<HNode> root_;
     void buildCodes(std::shared_ptr<HNode> node, std::vector<bool> &path, std::map<std::string, std::vector<bool>> &out) const;
+    void serialize_helper(std::shared_ptr<HNode> node, BitOutputStream& bit_out) const;
+    std::shared_ptr<HNode> deserialize_helper(BitInputStream& bit_in);
 };
 #endif
 
