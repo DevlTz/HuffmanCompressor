@@ -8,7 +8,7 @@
 #include <set>
 
 
-#include <string> // Garanta que isso está no topo
+#include <string> // Ensure this is at the top
 
 // Função para escapar caracteres especiais
 std::string escape_chars(const std::string& s) {
