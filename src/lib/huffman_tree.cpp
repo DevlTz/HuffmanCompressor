@@ -3,7 +3,7 @@
 #include <queue>
 #include <iostream>
 
-void serialize_helper(std::shared_ptr<HNode> node, BitOutputStream& bit_out) {
+void HuffmanTree::serialize_helper(std::shared_ptr<HNode> node, BitOutputStream& bit_out) const {
     if (node == nullptr) {
         return;
     }
@@ -27,7 +27,7 @@ void serialize_helper(std::shared_ptr<HNode> node, BitOutputStream& bit_out) {
     }
 }
 
-std::shared_ptr<HNode> deserialize_helper(BitInputStream& bit_in) {
+std::shared_ptr<HNode> HuffmanTree::deserialize_helper(BitInputStream& bit_in) {
     int bit = bit_in.readBit();
     if (bit == -1) { 
         return nullptr;

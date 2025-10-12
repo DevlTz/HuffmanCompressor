@@ -1,0 +1,3 @@
+O algoritmo de Huffman é um método de compressão de dados sem perdas.
+A ideia é usar a frequência dos símbolos para criar uma codificação de tamanho variável.
+Símbolos mais frequentes recebem códigos mais curtos, e símbolos raros recebem códigos mais longos. Que funcione agora pelo amor de DEUSSSSSSSSSSSS

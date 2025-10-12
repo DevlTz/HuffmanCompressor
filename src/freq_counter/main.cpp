@@ -8,6 +8,27 @@
 #include <set>
 
 
+#include <string> // Garanta que isso está no topo
+
+// Função para escapar caracteres especiais
+std::string escape_chars(const std::string& s) {
+    std::string escaped;
+    for (char c : s) {
+        if (c == '\n') {
+            escaped += "\\n";
+        } else if (c == '\r') {
+            escaped += "\\r";
+        } else if (c == '\t') {
+            escaped += "\\t";
+        } else if (c == '\\') {
+            escaped += "\\\\";
+        } else {
+            escaped += c;
+        }
+    }
+    return escaped;
+}
+
 //Function to help in case the loop find a char in the file
 std::string charToString(char c) {
     return std::string(1, c);
@@ -131,9 +152,9 @@ int main(int argc, char** argv) {
     }
 
     // Formato do map simbolo:fequencia
-    for (const auto& pair : freqs) {
-        (*out_stream) << pair.first << ":" << pair.second << "\n";
-    }
+   for (const auto& pair : freqs) {
+    (*out_stream) << escape_chars(pair.first) << ":" << pair.second << "\n";
+}
 
     if (out_file.is_open()) {
         out_file.close();
