@@ -1,0 +1,1 @@
+## Arquivos .freq gerados pelo script full_test.sh serão salvos aqui, garantindo a exibição da frequência de símbolos

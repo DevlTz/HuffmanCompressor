@@ -1,0 +1,1 @@
+## Arquivos de código gerados pelo script (Por descompressão) full_test.sh serão salvos aqui
