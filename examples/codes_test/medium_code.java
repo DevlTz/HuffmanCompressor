@@ -1,11 +1,10 @@
+ import java.util.Objects;
 
-import java.util.Objects;
-
-public class Tarefa {
+public class medium_code {
     private String descricao;
     private boolean concluida;
 
-    public Tarefa(String descricao) {
+    public medium_code(String descricao) {
         this.descricao = descricao;
         this.concluida = false;
     }
@@ -31,7 +30,7 @@ public class Tarefa {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass())
             return false;
-        Tarefa tarefa = (Tarefa) o;
+        medium_code tarefa = (medium_code) o;
         return Objects.equals(getDescricao(), tarefa.getDescricao());
     }
 
