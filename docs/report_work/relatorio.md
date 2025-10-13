@@ -57,6 +57,14 @@ A taxa de compressão foi calculada usando a fórmula:
 |                                 | 7.1 KB           | zip                 | 5.3 KB             | 25.4%              |
 | **Texto Simples** (`texto.txt`) | 10.2 KB          | HuffmanCompressor   | 6.1 KB             | 40.2%              |
 |                                 | 10.2 KB          | **zip (DEFLATE)** | **5.5 KB** | **46.1%** |
+| **C++ (simples)** (`simple_code.cpp`) | 312 B            | HuffmanCompressor   | 283 B              | 9.3%               |
+|                                 | 312 B            | **gzip** | **239 B** | **23.4%** |
+| **Java (médio)** (`medium_code.java`) | 980 B            | HuffmanCompressor   | 631 B              | 35.6%              |
+|                                 | 980 B            | **gzip** | **347 B** | **64.6%** |
+| **JavaScript (médio)** (`medium_code.js`) | 3.9 KB           | HuffmanCompressor   | 2.7 KB             | 30.6%              |
+|                                 | 3.9 KB           | **gzip** | **1.4 KB** | **63.2%** |
+| **TypeScript (simples)** (`simple_code.ts`) | 431 B            | HuffmanCompressor   | 350 B              | 18.8%              |
+|                                 | 431 B            | **gzip** | **292 B** | **32.3%** |
 
 ### Análise dos Resultados
 
@@ -65,6 +73,9 @@ Os resultados experimentais confirmam a hipótese central do projeto:
 1.  **Desempenho em Código-Fonte**: O **`HuffmanCompressor` foi superior ao `zip` na compressão do arquivo de código-fonte C++**. A taxa de compressão de 31.0% contra 25.4% do `zip` demonstra a vantagem da nossa abordagem. Ao tratar palavras-chave como `std::string`, `vector`, `if`, e `while` como símbolos únicos, nosso algoritmo atribui a eles códigos binários muito curtos. Compressores de uso geral, que operam em nível de byte, não possuem essa compreensão semântica e acabam gerando representações mais longas para essas sequências de caracteres recorrentes.
 
 2.  **Desempenho em Texto Simples**: Para o arquivo de texto comum, o `zip` obteve um resultado superior (46.1% vs. 40.2%). Isso ocorre porque algoritmos como o DEFLATE, usado pelo `zip`, combinam a codificação de Huffman com o algoritmo LZ77, que é extremamente eficaz em encontrar e substituir sequências de caracteres repetidas (não apenas símbolos únicos). Para texto natural, onde palavras e frases inteiras se repetem, a abordagem do LZ77 oferece uma vantagem significativa que nosso compressor, baseado puramente em Huffman, não possui.
+
+3. **Desempenho em Outros Códigos-Fonte (Java, JS, TypeScript)**:
+Os testes com códigos em outras linguagens, usando uma tabela de frequência treinada apenas com C++, revelaram um insight interessante: Para o arquivo Java (medium_code.java), nosso compressor alcançou uma taxa de 35.6%, enquanto o `zip` alcançou 49.6%. Para os arquivos JavaScript (medium_code.js) e TypeScript (simple_code.ts), a performance foi similar, com nosso compressor atingindo taxas de 30.6% e 18.8% respectivamente, contra taxas muito superiores das ferramentas padrão como `gzip` (63.2%) e `zip` (59.6%) no caso do JS.
 
 ## 4. Conclusão
 
