@@ -8,7 +8,7 @@ echo "file,original,ours,gzip,zip,7z,ours_ratio,gzip_ratio,zip_ratio,7z_ratio" >
 for f in "$@"; do
   if [ ! -f "$f" ]; then echo "Skipping $f (not a file)"; continue; fi
   orig=$(stat -c%s "$f")
-  ./compressor -c "$f" -o temp.ours.huf
+  ./compressor.exe -c -i "$f" -o temp.ours.huf
   ours=$(stat -c%s temp.ours.huf)
   gzip -k -f "$f"
   gzipf="$f.gz"
