@@ -3,7 +3,7 @@
 **Autor**: Kauã do Vale Ferreira - Caio de Medeiros Trindade
 ## 1. Introdução
 
-Este documento detalha a implementação de um compressor e descompressor de arquivos baseado no algoritmo de Huffman, desenvolvido como parte do projeto da disciplina de Estrutura de Dados 2. O objetivo principal foi criar uma ferramenta de linha de comando em C++ capaz de comprimir arquivos de texto, com uma otimização especial para códigos-fonte de linguagens como C++.
+Este documento detalha a implementação de um compressor e descompressor de arquivos baseado no algoritmo de Huffman, desenvolvido como parte do projeto da disciplina de Estrutura de Dados 2. O objetivo principal foi criar uma ferramenta de linha de comando em C++ capaz de comprimir arquivos de texto, com uma otimização especial para códigos-fonte de linguagens como C++, Python, Java,JavaScript, TypeScript.
 
 O projeto foi dividido em dois executáveis principais:
 1.  **Contador de Frequência**: Uma ferramenta para analisar um conjunto de arquivos e gerar uma tabela de frequência de "símbolos". Diferente de uma abordagem tradicional, os símbolos não são apenas caracteres individuais, mas também palavras-chave da linguagem (ex: `int`, `while`, `std::vector`), permitindo uma compressão mais semântica e eficiente para código.
