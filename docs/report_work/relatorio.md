@@ -77,6 +77,25 @@ Os resultados experimentais confirmam a hipótese central do projeto:
 3. **Desempenho em Outros Códigos-Fonte (Java, JS, TypeScript)**:
 Os testes com códigos em outras linguagens, usando uma tabela de frequência treinada apenas com C++, revelaram um insight interessante: Para o arquivo Java (medium_code.java), nosso compressor alcançou uma taxa de 35.6%, enquanto o `zip` alcançou 49.6%. Para os arquivos JavaScript (medium_code.js) e TypeScript (simple_code.ts), a performance foi similar, com nosso compressor atingindo taxas de 30.6% e 18.8% respectivamente, contra taxas muito superiores das ferramentas padrão como `gzip` (63.2%) e `zip` (59.6%) no caso do JS.
 
+### 3.1. Desafio de Implementação: O Bug do Padding de Bits
+
+Durante os testes de validação, foi identificado um bug de caso de borda que afetava a integridade dos arquivos descomprimidos. Em alguns casos, notavelmente com um arquivo de teste em Java, o arquivo restaurado continha um caractere extra no final, fazendo com que a verificação de integridade (`diff`) falhasse.
+
+**Causa Raiz do Problema**
+
+A causa do problema está na natureza da escrita de dados em bits. O algoritmo de Huffman gera códigos de comprimentos variáveis, mas os sistemas de arquivos operam em bytes (grupos de 8 bits). Quando o número total de bits do conteúdo comprimido não é um múltiplo de 8, a última escrita no arquivo preenche o byte final com bits de "padding" (preenchimento) que não fazem parte dos dados originais.
+
+A versão inicial do nosso descompressor lia o fluxo de bits continuamente (`while(true)`) até que o stream terminasse. Consequentemente, ele tentava interpretar esses bits de padding como se fossem um código de Huffman válido, resultando na decodificação de um símbolo final incorreto.
+
+**Solução Implementada**
+
+Para resolver este problema de forma robusta, modificamos o formato do nosso arquivo `.huff`. A solução consistiu em duas etapas:
+
+1.  **Na Compressão:** Antes de escrever a árvore serializada e os dados comprimidos, agora escrevemos um cabeçalho de 8 bytes contendo o **número total de símbolos (tokens)** que o arquivo original possuía.
+
+2.  **Na Descompressão:** O programa primeiro lê este número do cabeçalho. Em seguida, o loop de descompressão foi alterado de um laço infinito para um laço `for` que executa exatamente o número de vezes lido, garantindo que apenas a quantidade correta de símbolos seja decodificada.
+
+Essa alteração tornou o processo de descompressão preciso, fazendo com que ele pare exatamente no último bit válido e ignore qualquer bit de padding, garantindo a restauração perfeita do arquivo original em todos os casos de teste.
 ## 4. Conclusão
 
 O projeto foi concluído com sucesso, resultando em uma ferramenta de compressão robusta.
