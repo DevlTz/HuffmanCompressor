@@ -208,13 +208,13 @@ void compress_file(const string &inputPath, const string &outputPath, const stri
                 if (b == -1) {
                     // Fim inesperado do arquivo, algo deu errado.
                     // Paramos aqui para evitar corrupção.
-                    bool decoding_error = false;
+                    bool decoding_error = true;
                     break;
                 }
                 node = (b == 0) ? node->left : node->right;
             }
             if (decoding_error) {
-                 break;
+                 break; 
             }
             if (node && node->isLeaf()) {
                 out << node->symbol;
