@@ -1,5 +1,3 @@
-#include "../../include/compressor/compressor.h"
-
 #include <fstream>
 #include <sstream>
 #include <stdexcept>
@@ -10,6 +8,7 @@
 #include <cstdint>
 #include <cstring>
 
+#include "../../include/compressor/compressor.h"
 #include "../../include/huffman/huffman_tree.h"
 #include "../../include/huffman/bit_stream.h"
 
@@ -149,7 +148,10 @@ void compress_file(const string &inputPath, const string &outputPath, const stri
 
     ofstream out(outputPath, ios::binary);
     if (!out) throw runtime_error("Nao foi possivel abrir o arquivo de saida: " + outputPath);
-
+    
+    uint64_t token_count = tokens.size();
+    out.write(reinterpret_cast<const char*>(&token_count), sizeof(token_count));
+  
     // Salva a árvore no início do arquivo.
     tree.serialize(out);
 
@@ -173,37 +175,57 @@ void compress_file(const string &inputPath, const string &outputPath, const stri
 }
 
 // Função principal para descomprimir um arquivo.
-void decompress_file(const string &inputPath, const string &outputPath) {
-    ifstream in(inputPath, ios::binary);
-    if (!in) throw runtime_error("Nao foi possivel abrir o arquivo comprimido: " + inputPath);
+    void decompress_file(const string &inputPath, const string &outputPath) {
+        ifstream in(inputPath, ios::binary);
+        if (!in) throw runtime_error("Nao foi possivel abrir o arquivo comprimido: " + inputPath);
 
-    // Lê a árvore do início do arquivo.
-    HuffmanTree tree;
-    tree.deserialize(in);
-    
-    auto root = tree.getRoot();
-    if (!root) { return; }
 
-    ofstream out(outputPath, ios::binary);
-    if (!out) throw runtime_error("Nao foi possivel abrir o arquivo de saida: " + outputPath);
+        uint64_t tokens_to_decode = 0;
+        in.read(reinterpret_cast<char*>(&tokens_to_decode), sizeof(tokens_to_decode));
+          if (in.gcount() != sizeof(tokens_to_decode)) {
+                // Cria um arquivo vazio, pois não há nada para decodificar.
+             ofstream out(outputPath, ios::binary);
+             out.close();
+            return;
+         }
+        // Lê a árvore do início do arquivo.
+        HuffmanTree tree;
+        tree.deserialize(in);
+        
+        auto root = tree.getRoot();
+        if (!root) { return; }
 
-    // Lê os bits e percorre a árvore para decodificar.
-    BitInputStream bin(in);
-    auto node = root;
-    while (true) {
-        int b = bin.readBit();
-        if (b == -1) break;
+        ofstream out(outputPath, ios::binary);
+        if (!out) throw runtime_error("Nao foi possivel abrir o arquivo de saida: " + outputPath);
 
-        node = (b == 0) ? node->left : node->right;
+        // Lê os bits e percorre a árvore para decodificar.
+        BitInputStream bin(in);
+        auto node = root;
+        for (uint64_t i = 0; i < tokens_to_decode; ++i) {
+            node = root; // Reinicia a busca na árvore para cada novo token
+            while (node && !node->isLeaf()) {
+                int b = bin.readBit();
+                if (b == -1) {
+                    // Fim inesperado do arquivo, algo deu errado.
+                    // Paramos aqui para evitar corrupção.
+                    node = nullptr; // Sinaliza erro para quebrar o loop externo
+                    break;
+                }
+                node = (b == 0) ? node->left : node->right;
+            }
 
-        if (node->isLeaf()) {
-            out << node->symbol;
-            node = root;
+            if (node && node->isLeaf()) {
+                out << node->symbol;
+            } else {
+                // Se chegamos aqui, o arquivo está corrompido ou o stream terminou.
+                break;
+            }
         }
-    }
 
-    out.close();
-    in.close();
+        out.close();
+        in.close();
+
+    cout << "Decompressed " << inputPath << " -> " << outputPath << endl;
 }
 
 } // namespace compressor
