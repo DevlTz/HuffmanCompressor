@@ -194,10 +194,10 @@ void compress_file(const string &inputPath, const string &outputPath, const stri
         
         auto root = tree.getRoot();
         if (!root) { return; }
-
+        bool decoding_error = false;
         ofstream out(outputPath, ios::binary);
         if (!out) throw runtime_error("Nao foi possivel abrir o arquivo de saida: " + outputPath);
-
+          
         // Lê os bits e percorre a árvore para decodificar.
         BitInputStream bin(in);
         auto node = root;
@@ -208,12 +208,14 @@ void compress_file(const string &inputPath, const string &outputPath, const stri
                 if (b == -1) {
                     // Fim inesperado do arquivo, algo deu errado.
                     // Paramos aqui para evitar corrupção.
-                    node = nullptr; // Sinaliza erro para quebrar o loop externo
+                    bool decoding_error = false;
                     break;
                 }
                 node = (b == 0) ? node->left : node->right;
             }
-
+            if (decoding_error) {
+                 break;
+            }
             if (node && node->isLeaf()) {
                 out << node->symbol;
             } else {
@@ -225,7 +227,11 @@ void compress_file(const string &inputPath, const string &outputPath, const stri
         out.close();
         in.close();
 
-    cout << "Decompressed " << inputPath << " -> " << outputPath << endl;
+    if (decoding_error) {
+        cerr << "Aviso: O ficheiro de entrada terminou inesperadamente. A descompressao pode estar incompleta." << endl;
+    } else {
+        cout << "Decompressed " << inputPath << " -> " << outputPath << endl;
+    }
 }
 
 } // namespace compressor
