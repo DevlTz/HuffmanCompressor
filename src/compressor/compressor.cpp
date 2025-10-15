@@ -183,11 +183,11 @@ void compress_file(const string &inputPath, const string &outputPath, const stri
         uint64_t tokens_to_decode = 0;
         in.read(reinterpret_cast<char*>(&tokens_to_decode), sizeof(tokens_to_decode));
           if (in.gcount() != sizeof(tokens_to_decode)) {
-                // Cria um arquivo vazio, pois não há nada para decodificar.
-             ofstream out(outputPath, ios::binary);
-             out.close();
-            return;
-         }
+              // Cria um arquivo vazio, pois não há nada para decodificar.
+              ofstream out(outputPath, ios::binary);
+              out.close();
+              return;
+          }
         // Lê a árvore do início do arquivo.
         HuffmanTree tree;
         tree.deserialize(in);
